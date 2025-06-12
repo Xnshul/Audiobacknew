@@ -1,38 +1,71 @@
-// backend/routes/audioRoutes.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const Audio = require('../models/Audio');
+
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (_, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
 
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
+
 
 router.post('/', upload.single('audio'), async (req, res) => {
   try {
     const { title } = req.body;
-    const filePath = req.file.path;
+    const file = req.file;
 
-    const newAudio = new Audio({ title, filePath });
-    // console.log("newAudio", newAudio)
+    if (!file || !title) {
+      return res.status(400).json({ message: 'Title and audio file required' });
+    }
 
-    await newAudio.save();
+    const audio = new Audio({
+      title,
+      mimetype: file.mimetype,
+      audioData: file.buffer
+    });
 
-    res.status(201).json(newAudio);
+    await audio.save();
+
+    res.status(201).json({
+      _id: audio._id,
+      title: audio.title,
+      url: `${process.env.BASE_URL}/api/audio/${audio._id}` 
+    });
   } catch (err) {
-    res.status(500).json({ message: 'Upload error', error: err.message });
+    console.error('Upload failed:', err);
+    res.status(500).json({ message: 'Upload failed', error: err.message });
   }
 });
 
+
 router.get('/', async (req, res) => {
-  const audios = await Audio.find().sort({ createdAt: -1 });
-  res.json(audios);
+  try {
+    const audioList = await Audio.find().sort({ createdAt: -1 });
+    const mapped = audioList.map((audio) => ({
+      _id: audio._id,
+      title: audio.title,
+      url: `${process.env.BASE_URL}/api/audio/${audio._id}`
+    }));
+    res.json(mapped);
+  } catch (err) {
+    res.status(500).json({ message: 'Fetch failed', error: err.message });
+  }
+});
+
+
+router.get('/:id', async (req, res) => {
+  try {
+    const audio = await Audio.findById(req.params.id);
+
+    if (!audio) {
+      return res.status(404).json({ message: 'Audio not found' });
+    }
+
+    res.set('Content-Type', audio.mimetype);
+    res.send(audio.audioData);
+  } catch (err) {
+    res.status(500).json({ message: 'Fetch failed', error: err.message });
+  }
 });
 
 module.exports = router;
