@@ -43,8 +43,10 @@ router.get('/', async (req, res) => {
     const audioList = audios.map((audio) => ({
       _id: audio._id,
       title: audio.title,
-      url: `${req.protocol}://${req.get('host')}/api/audio/${audio._id}`,
+      url: `${req.protocol}s://${req.get('host')}/api/audio/${audio._id}`,
     }));
+
+    console.log("protocol",req.protocol)
 
     res.json(audioList);
   } catch (err) {
