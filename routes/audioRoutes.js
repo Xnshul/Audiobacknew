@@ -3,11 +3,11 @@ const multer = require('multer');
 const Audio = require('../models/Audio');
 const router = express.Router();
 
-// Multer setup to handle memory storage (we store in MongoDB, not file system)
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// POST /api/audio — Upload audio
+
 router.post('/', upload.single('audio'), async (req, res) => {
   try {
     const { title } = req.body;
@@ -35,7 +35,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
   }
 });
 
-// GET /api/audio — List all recordings
+
 router.get('/', async (req, res) => {
   try {
     const audios = await Audio.find().sort({ createdAt: -1 });
@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/audio/:id — Stream a specific recording
+
 router.get('/play/:id', async (req, res) => {
   try {
     const audio = await Audio.findById(req.params.id);
@@ -67,7 +67,7 @@ router.get('/play/:id', async (req, res) => {
   }
 });
 
-// DELETE - Remove an audio by ID
+
 router.delete('/:id', async (req, res) => {
   try {
     await Audio.findByIdAndDelete(req.params.id);
