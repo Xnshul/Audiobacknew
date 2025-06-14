@@ -1,12 +1,10 @@
-// backend/models/Audio.js
-// models/Audio.js
 const mongoose = require('mongoose');
 
 const AudioSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  mimetype: { type: String, required: true },
-  audioData: { type: Buffer, required: true },
-}, { timestamps: true });
+  data: { type: Buffer, required: true },
+  contentType: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
 
 module.exports = mongoose.model('Audio', AudioSchema);
-

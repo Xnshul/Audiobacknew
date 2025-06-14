@@ -11,11 +11,19 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "ffmpeg-static": "^5.2.0",
+    "fs": "^0.0.1-security",
+    "jade": "^1.11.0",
     "mongodb": "^6.17.0",
-    "mongoose": "^8.15.1",
-    "multer": "^2.0.1"
+    "mongoose": "^8.15.2",
+    "multer": "^2.0.1",
+    "npm": "^11.4.2",
+    "openai": "^5.3.0",
+    "transcription": "^0.2.1",
+    "uuid": "^11.1.0"
   }
 }
